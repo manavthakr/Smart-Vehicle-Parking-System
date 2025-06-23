@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Parking System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      padding: 30px;
+      color: #333;
+    }
+    h2 {
+      color: #00796b;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 32px;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffffdd;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    input {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      width: 220px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      background: #fffde7;
+    }
+    button {
+      padding: 12px 20px;
+      background: linear-gradient(45deg, #42a5f5, #ab47bc);
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(100, 100, 255, 0.3);
+    }
+    button:hover {
+      background: linear-gradient(45deg, #1e88e5, #8e24aa);
+      transform: scale(1.05);
+    }
+    .parking-lot {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      background: #ede7f6;
+      border-radius: 10px;
+    }
+    .slot {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #b0bec5;
+      border-radius: 12px;
+      background-color: #c8e6c9;
+      color: #2e7d32;
+      font-weight: bold;
+      font-size: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .occupied {
+      background-color: #f8bbd0;
+      color: #880e4f;
+    }
+    .highlight {
+      background-color: #fff9c4 !important;
+      color: #f57f17 !important;
+      transform: scale(1.1);
+    }
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🚗 Smart Parking System (Queue-Based)</h2>
+    <div class="controls">
+      <input type="text" id="carNumber" placeholder="Enter Car Number">
+      <button onclick="parkCar()">Park Car</button>
+      <button onclick="removeCar()">Remove Car</button>
+      <button onclick="findCar()">Find Car</button>
+    </div>
+    <div class="parking-lot" id="parkingLot"></div>
+  </div>
+  <footer>
+    &copy; 2025 Smart Parking UI — Created with HTML, CSS & JS
+  </footer>
+  <script>
+    const totalSlots = 10;
+    let parkingQueue = new Array(totalSlots).fill(null);
+
+    function renderParkingLot(highlightIndex = -1) {
+      const lot = document.getElementById("parkingLot");
+      lot.innerHTML = "";
+      parkingQueue.forEach((car, index) => {
+        const slot = document.createElement("div");
+        slot.classList.add("slot");
+        if (car) slot.classList.add("occupied");
+        if (index === highlightIndex) slot.classList.add("highlight");
+        slot.innerText = car ? car : `Slot ${index + 1}`;
+        lot.appendChild(slot);
+      });
+    }
+
+    function parkCar() {
+      const carNumber = document.getElementById("carNumber").value.trim();
+      if (!carNumber) return alert("Please enter a car number.");
+      const index = parkingQueue.indexOf(null);
+      if (index !== -1) {
+        parkingQueue[index] = carNumber;
+        renderParkingLot();
+      } else {
+        alert("Parking Full!");
+      }
+      document.getElementById("carNumber").value = "";
+    }
+
+    function removeCar() {
+      const carNumber = document.getElementById("carNumber").value.trim();
+      const index = parkingQueue.indexOf(carNumber);
+      if (index !== -1) {
+        parkingQueue[index] = null;
+        renderParkingLot();
+      } else {
+        alert("Car not found in parking lot.");
+      }
+      document.getElementById("carNumber").value = "";
+    }
+
+    function findCar() {
+      const carNumber = document.getElementById("carNumber").value.trim();
+      if (!carNumber) return alert("Please enter a car number.");
+      const index = parkingQueue.indexOf(carNumber);
+      if (index !== -1) {
+        renderParkingLot(index);
+        setTimeout(() => renderParkingLot(), 2000);
+      } else {
+        alert("Car not found in parking lot.");
+      }
+      document.getElementById("carNumber").value = "";
+    }
+
+    renderParkingLot();
+  </script>
+</body>
+</html>
